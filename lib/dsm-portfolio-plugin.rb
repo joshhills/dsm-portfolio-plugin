@@ -5,12 +5,15 @@ module Jekyll
         class NewProject < Command
             def self.init_with_program(prog)
                 prog.command(:project) do |c|
+                    # Define documentation.
                     c.syntax 'project NAME'
                     c.description 'Creates a new project with the given NAME'
         
+                    # Define options.
                     c.option 'date', '-d DATE', '--date DATE', 'Specify the post date'
                     c.option 'force', '-f', '--force', 'Overwrite a post if it already exists'
         
+                    # Process.
                     c.action do |args, options|
                         Jekyll::Commands::NewProject.process(args, options)
                     end
@@ -18,37 +21,39 @@ module Jekyll
             end
 
             def self.process(args, options = {})
+                # Null check required fields.
                 raise ArgumentError.new('You must specify a project name.') if args.empty?
-
-                # layout = options["layout"].nil? ? "post" : options["layout"]
                 
-                # Create options for each post type.
+                # Create default options for each post type.
                 ext = "md"
                 date = options["date"].nil? ? Time.now : DateTime.parse(options["date"])
 
                 title = args.shift
                 name = title.gsub(' ', '-').downcase
 
-                # TODO: Replace this with smart filling from data file and template file.
-                post_types = []
+                # Fill task from data file.
+                post_types_data_file = "post-types"
+                
+                post_types = site.data[post_types_data_file]
 
-                post_types.push('vignette')
-                post_types.push('summary')
-
-                # raise ArgumentError.new("A post already exists at ./#{post_path}") if File.exist?(post_path) and !options["force"]
-
-                # Make subdirectory.
-                FileUtils.mkdir_p directory_name(name, date)
-
+                if post_types.size > 0
+                    # Make subdirectory.
+                    FileUtils.mkdir_p directory_name(name, date)
+                else
+                    raise RangeError.new("There are no post types defined in #{post_types_data_file}.")
+                end
+                
                 # For every post-type in subfolder...
                 post_types.each do |post_type|
                     # Format file path.
-                    post_path = file_name(name, post_type, ext, date)
+                    post_path = file_name(name, post_type.post_type, ext, date)
+                    
+                    raise ArgumentError.new("A post already exists at ./#{post_path}") if File.exist?(post_path) and !options["force"]
                     
                     # Create file.
                     File.open(post_path, "w") do |f|
                         # Fill it with appropriate front-matter.
-                        f.puts(front_matter(post_type, title))
+                        f.puts(front_matter(post_type.post_type, title))
                     end
                 end
 
