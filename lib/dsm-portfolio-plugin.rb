@@ -34,7 +34,7 @@ module Jekyll
                 # Fill task from data file.
                 post_types_data_file = "post-types"
                 
-                puts Jekyll.configuration({}).to_json
+                puts Jekyll::Site.to_json
 
                 if post_types.size > 0
                     # Make subdirectory.
