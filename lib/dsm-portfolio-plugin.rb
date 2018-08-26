@@ -1,5 +1,74 @@
-# TODO: Comment
+# TODO: Comment!
 module Jekyll
+    # Define custom commands.
+    module Commands
+        class NewProject < Jekyll::Command
+            class << self
+                def self.init_with_program(prog)
+                    prog.command(:project) do |c|
+                        c.syntax 'project NAME'
+                        c.description 'Creates a new project with the given NAME'
+            
+                        c.option 'date', '-d DATE', '--date DATE', 'Specify the post date'
+                        c.option 'force', '-f', '--force', 'Overwrite a post if it already exists'
+            
+                        c.action do |args, options|
+                            Jekyll::Commands::Project.process(args, options)
+                        end
+                    end
+                end
+
+                def self.process(args, options = {})
+                    raise ArgumentError.new('You must specify a name.') if args.empty?
+
+                    # layout = options["layout"].nil? ? "post" : options["layout"]
+                    
+                    # Create options for each post type.
+                    ext = "md"
+                    date = options["date"].nil? ? Time.now : DateTime.parse(options["date"])
+
+                    title = args.shift
+                    name = title.gsub(' ', '-').downcase
+
+                    # TODO: Replace this with smart filling from data file and template file.
+                    post_types = []
+
+                    post_types.push('vignette')
+                    post_types.push('summary')
+
+                    # raise ArgumentError.new("A post already exists at ./#{post_path}") if File.exist?(post_path) and !options["force"]
+
+                    # For every post-type in subfolder...
+                    post_types.each do |file_type|
+                        # Format file path.
+                        post_path = file_name(name, post_type, ext, date)
+                        
+                        # Create file.
+                        File.open(post_path, "w") do |f|
+                            # Fill it with appropriate front-matter.
+                            f.puts(front_matter(post_type, title))
+                        end
+                    end
+
+                    puts "New posts created at ./_posts/#{date.strftime('%Y-%m-%d')}-#{name}.\n"
+                end 
+                
+                # Returns the filename of the draft, as a String
+                def self.file_name(name, post_type, ext, date)
+                    "_posts/#{date.strftime('%Y-%m-%d')}-#{name}/#{post_type}.#{ext}"
+                end
+
+                # TODO: Replace this with smart filling from data file and template file.
+                def self.front_matter(layout, title)
+                    "---
+                    layout: #{layout}
+                    title: #{title}
+                    ---"
+                end
+            end
+        end
+    end
+
     class ProjectGenerator < Generator
         safe true
         priority :highest
@@ -57,18 +126,28 @@ module Jekyll
                     competencyTally[:count] += 1
                 else
                     # Add entry.
-                    context['active_vignette'][:competencies].push({
-                        'id': competency['id'],
-                        'count': 1
-                    })
+                    if competency
+                        context['active_vignette'][:competencies].push({
+                            'id': competency['id'],
+                            'count': 1,
+                            'linked': true
+                        })
+                    else
+                        context['active_vignette'][:competencies].push({
+                            'id': @competencyId,
+                            'count': 1,
+                            'linked': false
+                        })
+                    end
                 end
             end
 
             # Render if available.
             if competency
-                "<span class=\"a-pill\">#{competency['id']}</span>"
+                # <a href="#" class="badge badge-primary">Primary</a>
+                " <a href=\"#{context.registers[:site].baseurl}/competencies##{competency['id']}\" class=\"badge badge-primary\">#{competency['id']}</a>"
             else
-                "<span class=\"a-pill a-pill--error\">\"#{@competencyId}\" undefined</span>"
+                " <span class=\"badge badge-danger\">#{@competencyId} undefined</span>"
             end
         end
     end
@@ -105,9 +184,9 @@ module Jekyll
             # Render text as normal.
             rendered = super
             # Wrap in page-specific markup.
-            classString = 'o-vignette-blocks__block'
+            classString = 'vignette-block'
             if context['page']['vignettes'].size == 1
-                classString += ' o-vignette-blocks__block--active'
+                classString += ' active'
             end
             "<div class=\"#{classString}\" id=\"block-#{context['page']['vignettes'].size - 1}\">#{rendered}</div>"
         end
