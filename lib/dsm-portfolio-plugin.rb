@@ -12,7 +12,7 @@ module Jekyll
                     c.option 'force', '-f', '--force', 'Overwrite a post if it already exists'
         
                     c.action do |args, options|
-                        Jekyll::Commands::Project.process(args, options)
+                        Jekyll::Commands::NewProject.process(args, options)
                     end
                 end
             end
