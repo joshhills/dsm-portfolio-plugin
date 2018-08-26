@@ -37,6 +37,9 @@ module Jekyll
 
                 # raise ArgumentError.new("A post already exists at ./#{post_path}") if File.exist?(post_path) and !options["force"]
 
+                # Make subdirectory.
+                FileUtils.mkdir_p directory_name(name, date)
+
                 # For every post-type in subfolder...
                 post_types.each do |post_type|
                     # Format file path.
@@ -52,6 +55,10 @@ module Jekyll
                 puts "New posts created at ./_posts/#{date.strftime('%Y-%m-%d')}-#{name}.\n"
             end 
             
+            def self.directory_name(name, date)
+                "_posts/#{date.strftime('%Y-%m-%d')}-#{name}"
+            end
+
             # Returns the filename of the draft, as a String
             def self.file_name(name, post_type, ext, date)
                 "_posts/#{date.strftime('%Y-%m-%d')}-#{name}/#{post_type}.#{ext}"
