@@ -37,7 +37,7 @@ module Jekyll
                 # Initialise the site object from configuration (to access data files)
                 site = Jekyll::Site.new(options)
                 
-                puts (site.site_data).to_json
+                puts (site.site_data).to_yaml
 
                 if post_types.size > 0
                     # Make subdirectory.
