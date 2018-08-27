@@ -51,14 +51,14 @@ module Jekyll
                 # For every post-type in subfolder...
                 post_types.each do |post_type|
                     # Format file path.
-                    post_path = file_name(name, post_type.post_type, ext, date)
+                    post_path = file_name(name, post_type[:post_type], ext, date)
                     
                     raise ArgumentError.new("A post already exists at ./#{post_path}") if File.exist?(post_path) and !options["force"]
                     
                     # Create file.
                     File.open(post_path, "w") do |f|
                         # Fill it with appropriate front-matter.
-                        f.puts(front_matter(post_type.post_type, title))
+                        f.puts(front_matter(post_type[:post_type], title))
                     end
                 end
 
