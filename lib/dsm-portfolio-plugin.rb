@@ -35,7 +35,7 @@ module Jekyll
                 post_types_data_file = "post-types"
                 
                 # Initialise the site object from configuration (to access data files)
-                site = Jekyll::Site.new(options)
+                site = Jekyll::Site.new()
                 
                 puts "test: "
                 puts site.site_data
