@@ -36,7 +36,7 @@ module Jekyll
                 
                 # Initialise the site object from configuration (to access data files)
                 config_options = configuration_from_options({})
-                site = Jekyll::Site.new(options)
+                site = Jekyll::Site.new(config_options)
                 
                 puts "test: "
                 puts site.site_data
