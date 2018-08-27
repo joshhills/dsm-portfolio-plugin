@@ -35,7 +35,13 @@ module Jekyll
                 post_types_data_file = "post-types"
                 
                 # Initialise the site object from configuration (to access data files)
-                puts @context.registers[:site]
+                config_options = configuration_from_options({})
+                site = Jekyll::Site.new(config_options)
+                
+                puts "test: "
+                puts site[:data].to_json
+
+                
 
                 if post_types.size > 0
                     # Make subdirectory.
