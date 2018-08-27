@@ -39,7 +39,7 @@ module Jekyll
                 site = Jekyll::Site.new(config_options)
                 
                 puts "test: "
-                puts site.site_data
+                puts site.to_json
 
                 if post_types.size > 0
                     # Make subdirectory.
