@@ -57,11 +57,6 @@ module Jekyll
                     
                     # Create file.
                     IO.copy_stream("_layouts/examples/#{post_type['template_file']}", post_path)
-                    
-                    # File.open(post_path, "w") do |f|
-                    #     # Fill it with appropriate front-matter.
-                    #     f.puts(front_matter(post_type[:post_type], title))
-                    # end
                 end
 
                 puts "New posts created at ./_posts/#{date.strftime('%Y-%m-%d')}-#{name}.\n"
@@ -71,17 +66,8 @@ module Jekyll
                 "_posts/#{date.strftime('%Y-%m-%d')}-#{name}"
             end
 
-            # Returns the filename of the draft, as a String
             def self.file_name(name, post_type, ext, date)
                 "_posts/#{date.strftime('%Y-%m-%d')}-#{name}/#{post_type}.#{ext}"
-            end
-
-            # TODO: Replace this with smart filling from data file and template file.
-            def self.front_matter(layout, title)
-                "---
-                layout: #{layout}
-                title: #{title}
-                ---"
             end
         end
     end
@@ -100,6 +86,7 @@ module Jekyll
                 projectFiles = grouping[1]
 
                 projectUrls = {}
+                projectCode = -1
 
                 # Give each file one-off values and assess availability.
                 projectFiles.each do |file|
@@ -110,12 +97,16 @@ module Jekyll
                     # Give each a type
                     file.data['type'] = file.basename_without_ext
 
+                    if !file.data['project_code'].nil?
+                        projectCode = file.data['project_code']
+
                     projectUrls[file.data['type']] = file.url
                 end
 
                 # Add singling URLs based on type.
                 projectFiles.each do |file|
                     file.data['project_urls'] = projectUrls
+                    file.data['project_code'] = projectCode
                 end
             end
         end
