@@ -51,7 +51,14 @@ module Jekyll
                 # For every post-type in subfolder...
                 post_types.each do |post_type|
                     # Format file path.
+                    puts post_type
+                    puts post_type[:post_type]
+
                     post_path = file_name(name, post_type[:post_type], ext, date)
+                    
+                    puts post_path
+
+                    puts '---'
                     
                     raise ArgumentError.new("A post already exists at ./#{post_path}") if File.exist?(post_path) and !options["force"]
                     
