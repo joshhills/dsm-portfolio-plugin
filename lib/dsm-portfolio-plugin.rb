@@ -39,7 +39,7 @@ module Jekyll
                 site = Jekyll::Site.new(config_options)
                 
                 puts "test: "
-                puts site[:data].to_json
+                puts site.inspect
 
                 
 
