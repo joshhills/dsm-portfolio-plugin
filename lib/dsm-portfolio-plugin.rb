@@ -56,7 +56,7 @@ module Jekyll
                     raise ArgumentError.new("A post already exists at ./#{post_path}") if File.exist?(post_path) and !options["force"]
                     
                     # Create file.
-                    IO.copy_stream("_layouts/#{post_type['template_file']}", post_path)
+                    IO.copy_stream("_layouts/examples/#{post_type['template_file']}", post_path)
                     
                     # File.open(post_path, "w") do |f|
                     #     # Fill it with appropriate front-matter.
