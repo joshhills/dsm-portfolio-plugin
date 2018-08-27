@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
     s.name          = "dsm-portfolio-plugin"
-    s.version       = "0.0.19"
+    s.version       = "0.0.20"
     s.licenses      = ['MIT']
     s.summary       = "Jekyll plugin necessary for dsm-portfolio-theme to function."
     s.description   = "Generates site project data and declares custom tags."
