@@ -32,17 +32,14 @@ module Jekyll
                 name = title.gsub(' ', '-').downcase
 
                 # Fill task from data file.
-                post_types_data_file = "post-types"
+                post_types_data_file = "project-post-types"
                 
                 # Initialise the site object from configuration (to access data files)
                 config_options = configuration_from_options({})
                 site = Jekyll::Site.new(config_options)
                 site.read
 
-                puts "test: "
-                puts (site.site_data).to_json
-
-                
+                post_types = site.site_data[post_types_data_file]
 
                 if post_types.size > 0
                     # Make subdirectory.
