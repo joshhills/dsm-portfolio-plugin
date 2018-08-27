@@ -99,6 +99,7 @@ module Jekyll
 
                     if !file.data['project_code'].nil?
                         projectCode = file.data['project_code']
+                    end
 
                     projectUrls[file.data['type']] = file.url
                 end
