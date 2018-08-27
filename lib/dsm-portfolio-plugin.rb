@@ -40,7 +40,7 @@ module Jekyll
                 site.read
 
                 puts "test: "
-                puts site.inspect
+                puts (site.site_data).to_json
 
                 
 
