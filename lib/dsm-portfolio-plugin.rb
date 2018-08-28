@@ -232,6 +232,50 @@ module Jekyll
         end
     end
 
+    class GeneratedPage < Page
+        def initialize(site, base, dir, name, template)
+            @site = site
+            @base = base
+            @dir = dir
+            @name = name
+            self.process(@name)
+            self.read_yaml(template)
+        end   
+    end
+    
+    class PageGenerator < Generator
+        priority :normal
+
+        def generate(site)
+            # For each file in '_layouts/generate'
+            puts "Starting page generator"
+
+            pagesToGenerate = Dir.glob(File.join(base, '_layouts/generate/**/*'))
+
+            puts "Pages to generate:"
+            puts pagesToGenerate.to_json
+
+            puts "Site base:"
+            puts site.source
+
+            pagesToGenerate.each do |filePath|
+                puts "Filepath:"
+                puts filePath
+                
+                puts "Basename:"
+                puts File.basename(filePath)
+
+                generatedPage = new GeneratedPage(site, site.source, filePath.delete_prefix("_layouts/generate"), File.basename(filePath), filePath)
+            end
+
+            # Format paths.
+            
+
+            # Create the page.
+            
+        end
+    end
+
     class ProgressionPage < Page
         def initialize(site, base, dir, data)
             @site = site
