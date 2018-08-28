@@ -239,7 +239,7 @@ module Jekyll
             @dir = dir
             @name = name
             self.process(@name)
-            self.read_yaml(template)
+            self.read_yaml(template, @name)
         end   
     end
     
@@ -265,8 +265,11 @@ module Jekyll
                 
                 puts "Basename:"
                 puts File.basename(filePath)
-
-                puts "Directory:"
+                
+                puts "In Directory:"
+                puts generateBasePath
+                
+                puts "Out Directory:"
                 filePath.sub(generateBasePath, '')
 
                 # Format paths.
@@ -275,7 +278,7 @@ module Jekyll
                     site.source,
                     filePath.sub(generateBasePath, ''),
                     File.basename(filePath),
-                    filePath
+                    generateBasePath
                 )
 
                 # Create the page
