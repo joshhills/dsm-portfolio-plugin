@@ -260,6 +260,8 @@ module Jekyll
             puts site.source
 
             pagesToGenerate.each do |filePath|
+                basename = File.basename(filePath)
+
                 puts "Filepath:"
                 puts filePath
                 
@@ -270,15 +272,15 @@ module Jekyll
                 puts generateBasePath
                 
                 puts "Out Directory:"
-                filePath.sub(generateBasePath, '')
+                outDirectory = filePath.sub(generateBasePath, '').sub(basename, '')
 
                 # Format paths.
                 generatedPage = GeneratedPage.new(
                     site,
                     site.source,
-                    filePath.sub(generateBasePath, ''),
-                    File.basename(filePath),
-                    generateBasePath
+                    outDirectory,
+                    basename,
+                    filePath.sub(basename, '')
                 )
 
                 # Create the page
