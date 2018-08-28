@@ -242,7 +242,7 @@ module Jekyll
             self.read_yaml(File.join(base, '_layouts'), 'progression.html')
 
             # Format data for API.
-            self.data['foo'] = bar
+            self.data['foo'] = 'bar'
         end   
     end
     
