@@ -231,6 +231,31 @@ module Jekyll
             end
         end
     end
+
+    class ProgressionAPI < Page
+        def initialize(site, base, dir)
+            @site = site
+            @base = base
+            @dir = dir
+            @name = 'archive.html'
+            self.process(@name)
+            self.read_yaml(File.join(base, '_layouts'), 'progression.html')
+
+            # Format data for API.
+            self.data['foo'] = bar
+        end   
+    end
+    
+    class ProgressionAPIGenerator < Generator
+        priority :low
+
+        def generate(site)
+            index = ProgressionAPI.new(site, site.source, '/')
+            index.render(site.layouts, site.site_payload)
+            index.write(site.dest)
+            site.pages << index
+        end
+    end
 end
 
 # Register everything.
