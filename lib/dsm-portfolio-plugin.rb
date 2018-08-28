@@ -269,20 +269,20 @@ module Jekyll
                 puts "Directory:"
                 filePath.sub(generateBasePath, '')
 
-                generatedPage = new GeneratedPage(
+                # Format paths.
+                generatedPage = GeneratedPage.new(
                     site,
                     site.source,
                     filePath.sub(generateBasePath, ''),
                     File.basename(filePath),
                     filePath
                 )
+
+                # Create the page
+                generatedPage.render(site.layouts, site.site_payload)
+                generatedPage.write(site.dest)
+                site.pages << generatedPage                
             end
-
-            # Format paths.
-            
-
-            # Create the page.
-            
         end
     end
 
