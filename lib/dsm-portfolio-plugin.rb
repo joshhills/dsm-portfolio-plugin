@@ -232,17 +232,31 @@ module Jekyll
         end
     end
 
-    class ProgressionAPI < Page
-        def initialize(site, base, dir)
+    class ProgressionPage < Page
+        def initialize(site, base, dir, data)
             @site = site
             @base = base
             @dir = dir
-            @name = 'archive.html'
+            @name = 'progression.html'
             self.process(@name)
             self.read_yaml(File.join(base, '_layouts'), 'progression.html')
 
             # Format data for API.
-            self.data['foo'] = 'bar'
+            self.data['progression_data'] = data
+        end   
+    end
+
+    class ProgressionAPIPage < Page
+        def initialize(site, base, dir, data)
+            @site = site
+            @base = base
+            @dir = dir
+            @name = 'progression.json'
+            self.process(@name)
+            self.read_yaml(File.join(base, '_layouts'), 'progression.json')
+
+            # Format data for API.
+            self.data['progression_data'] = data
         end   
     end
     
@@ -250,12 +264,26 @@ module Jekyll
         priority :low
 
         def generate(site)
-            index = ProgressionAPI.new(site, site.source, '/')
-            index.render(site.layouts, site.site_payload)
-            index.write(site.dest)
-            site.pages << index
+            # Format data for API.
+            progression_data = build_progression()
+
+            progressionAPIPage = ProgressionAPIPage.new(site, site.source, '/api/v1/', progression_data)
+            progressionAPIPage.render(site.layouts, site.site_payload)
+            progressionAPIPage.write(site.dest)
+            site.pages << progressionAPIPage
+            
+            progressionPage = ProgressionPage.new(site, site.source, '/', progression_data)
+            progressionPage.render(site.layouts, site.site_payload)
+            progressionPage.write(site.dest)
+            site.pages << progressionPage
+        end
+
+        # Internal
+        def build_progression()
+            return "{\"foo\": \"bar\"}"
         end
     end
+
 end
 
 # Register everything.
