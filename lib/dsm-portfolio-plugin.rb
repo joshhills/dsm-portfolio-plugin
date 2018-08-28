@@ -267,7 +267,7 @@ module Jekyll
                 puts File.basename(filePath)
 
                 puts "Directory:"
-                filePath.sub(generateBasePath)
+                filePath.sub(generateBasePath, '')
 
                 generatedPage = new GeneratedPage(
                     site,
