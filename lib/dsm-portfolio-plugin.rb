@@ -251,6 +251,7 @@ module Jekyll
             puts "Starting page generator"
 
             pagesToGenerate = Dir.glob(File.join(site.source, '_layouts/generate/**/*'))
+            generateBasePath = File.join(site.source, '_layouts/generate')
 
             puts "Pages to generate:"
             puts pagesToGenerate.to_json
@@ -265,7 +266,16 @@ module Jekyll
                 puts "Basename:"
                 puts File.basename(filePath)
 
-                generatedPage = new GeneratedPage(site, site.source, filePath.delete_prefix("_layouts/generate"), File.basename(filePath), filePath)
+                puts "Directory:"
+                filePath.sub(generateBasePath)
+
+                generatedPage = new GeneratedPage(
+                    site,
+                    site.source,
+                    filePath.sub(generateBasePath, ''),
+                    File.basename(filePath),
+                    filePath
+                )
             end
 
             # Format paths.
