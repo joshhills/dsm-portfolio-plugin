@@ -273,6 +273,7 @@ module Jekyll
                 
                 puts "Out Directory:"
                 outDirectory = filePath.sub(generateBasePath, '').sub(basename, '')
+                puts outDirectory
 
                 # Format paths.
                 generatedPage = GeneratedPage.new(
