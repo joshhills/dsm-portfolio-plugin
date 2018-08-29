@@ -203,6 +203,22 @@ module Jekyll
 
     module Filters
         module ApiFilter
+            def flatten_hash(input)
+                all_values = input.to_a.flatten
+                hash_values = all_values.select { |value| value.class == Hash }
+                most_nested_values = []
+        
+                if hash_values.count > 0
+                    hash_values.each do |hash_value|
+                    most_nested_values << flatten_hash(hash_value)
+                    end
+        
+                    most_nested_values.flatten
+                else
+                    return input
+                end
+            end
+
             def filter_fields(input, fields)
                 downcased_fields = fields
                     .split(",")
