@@ -205,12 +205,18 @@ module Jekyll
         module ApiFilter
             def flatten_hash(input)
                 all_values = input.to_a.flatten
+
+                puts "all_values = #{all_values.inspect}"
+
                 hash_values = all_values.select { |value| value.class == Hash }
+
+                puts "hash_values = #{hash_values.inspect}"
+                
                 most_nested_values = []
         
                 if hash_values.count > 0
                     hash_values.each do |hash_value|
-                    most_nested_values << flatten_hash(hash_value)
+                        most_nested_values << flatten_hash(hash_value)
                     end
         
                     most_nested_values.flatten
