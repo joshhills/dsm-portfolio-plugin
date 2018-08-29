@@ -250,7 +250,7 @@ module Jekyll
             # For each file in '_layouts/generate'
             puts "Starting page generator"
 
-            pagesToGenerate = Dir.glob(File.join(site.source, '_layouts/generate/**/*'))
+            pagesToGenerate = Dir.glob(File.join(site.source, '_layouts/generate/**/*.*'))
             generateBasePath = File.join(site.source, '_layouts/generate')
 
             puts "Pages to generate:"
