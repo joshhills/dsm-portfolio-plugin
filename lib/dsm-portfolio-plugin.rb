@@ -203,21 +203,6 @@ module Jekyll
 
     module Filters
         module ApiFilter
-            def flatten_hash(input)
-                all_values = input.to_a.flatten
-                hash_values = all_values.select { |value| value.class == Hash }
-                most_nested_values = []
-        
-                if hash_values.count > 0
-                  hash_values.each do |hash_value|
-                    most_nested_values << flatten_hash(hash_value)
-                  end
-        
-                  most_nested_values.flatten
-                else
-                  return input
-                end
-              end
             def filter_fields(input, fields)
                 downcased_fields = fields
                     .split(",")
@@ -228,6 +213,14 @@ module Jekyll
                         downcased_fields.include?(key.downcase)
                     end
                 end
+            end
+
+            def wrap_with_key(input, key)
+                {
+                    key => input,
+                    :status => "OK",
+                    :last_updated => Date.today
+                }
             end
         end
     end
@@ -343,6 +336,8 @@ module Jekyll
             return "{\"foo\": \"bar\"}"
         end
     end
+
+
 
 end
 
