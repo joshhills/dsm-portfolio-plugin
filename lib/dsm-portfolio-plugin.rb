@@ -239,13 +239,14 @@ module Jekyll
                     .map { |field| field.strip.downcase }
     
                 input.map do |entry|
-                    entry.select do |key, value|
-                        if exclude
-                            !downcased_fields.include?(key.downcase)
-                        else
-                            downcased_fields.include?(key.downcase)
-                        end
-                    end
+                    puts entry.inspect
+                    # entry.select do |key, value|
+                    #     if exclude
+                    #         !downcased_fields.include?(key.downcase)
+                    #     else
+                    #         downcased_fields.include?(key.downcase)
+                    #     end
+                    # end
                 end
             end
 
