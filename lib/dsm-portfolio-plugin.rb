@@ -204,11 +204,11 @@ module Jekyll
     module Filters
         module ApiFilter
             def include_fields_from_document(input, fields)
-                filter_fields(input, fields, false)
+                filter_fields_from_document(input, fields, false)
             end
 
             def strip_fields_from_document(input, fields)
-                filter_fields(input, fields, true)
+                filter_fields_from_document(input, fields, true)
             end
 
             def filter_fields_from_document(input, fields, exclude)
