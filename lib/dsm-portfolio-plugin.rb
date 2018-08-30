@@ -269,13 +269,16 @@ module Jekyll
     end
 
     class GeneratedPage < Page
-        def initialize(site, base, dir, name, template, data="")
+        def initialize(site, base, dir, name, template, data=nil)
             @site = site
             @base = base
             @dir = dir
             @name = name
             
-            self.data["payload"] = data
+            if data
+                self.data["payload"] = data
+            end
+            
             self.process(@name)
             self.read_yaml(template, @name)
         end   
@@ -292,26 +295,21 @@ module Jekyll
                 basename = File.basename(filePath)
                 outDirectory = filePath.sub(generateBasePath, '').sub(basename, '')
 
+                data = {}
+
                 # If there is a specific payload that needs to be sent...
                 if basename == "progression.json" || basename == "progression.html" 
                     data = build_progression_payload()
-                    site.pages << GeneratedPage.new(
-                        site,
-                        site.source,
-                        outDirectory,
-                        basename,
-                        filePath.sub(basename, ''),
-                        data
-                    )           
-                else
-                    site.pages << GeneratedPage.new(
-                        site,
-                        site.source,
-                        outDirectory,
-                        basename,
-                        filePath.sub(basename, '')
-                    )    
                 end
+ 
+                site.pages << GeneratedPage.new(
+                    site,
+                    site.source,
+                    outDirectory,
+                    basename,
+                    filePath.sub(basename, ''),
+                    data
+                )           
             end
         end
 
