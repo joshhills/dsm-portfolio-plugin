@@ -214,9 +214,21 @@ module Jekyll
             def filter_fields(input, fields, exclude)
                 downcased_fields = fields
                     .split(",")
-                    .map { |field| field.strip }
-    
-                input.except(downcased_fields)
+                    .map { |field| field.strip.downcase }
+            
+                temp = {}
+
+                input.map do |entry|
+                    if exclude
+                        if !downcased_fields.include?(entry.downcase)
+                            temp[entry] = input[entry]
+                        end
+                    else
+                        if downcased_fields.include?(entry.downcase)
+                            temp[entry] = input[entry]
+                        end
+                    end
+                end
             end
 
             def wrap_with_key(input, key)
