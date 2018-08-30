@@ -203,15 +203,15 @@ module Jekyll
 
     module Filters
         module ApiFilter
-            def include_fields(input, fields)
+            def include_fields_from_document(input, fields)
                 filter_fields(input, fields, false)
             end
 
-            def strip_fields(input, fields)
+            def strip_fields_from_document(input, fields)
                 filter_fields(input, fields, true)
             end
 
-            def filter_fields(input, fields, exclude)
+            def filter_fields_from_document(input, fields, exclude)
                 downcased_fields = fields
                     .split(",")
                     .map { |field| field.strip.downcase }
@@ -231,6 +231,31 @@ module Jekyll
                 end
 
                 temp
+            end
+
+            def include_fields(input, fields)
+                filter_fields(input, fields, false)
+            end
+
+            def strip_fields(input, fields)
+                filter_fields(input, fields, true)
+            end
+
+            def filter_fields(input, fields, exclude)
+                downcased_fields = fields
+                    .split(",")
+                    .map { |field| field.strip.downcase }
+    
+                input.map do |entry|
+                    puts entry.inspect
+                    entry.select do |key, value|
+                        if exclude
+                            !downcased_fields.include?(key.downcase)
+                        else
+                            downcased_fields.include?(key.downcase)
+                        end
+                    end
+                end
             end
 
             def wrap_with_key(input, key)
