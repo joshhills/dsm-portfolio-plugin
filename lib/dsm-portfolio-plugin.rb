@@ -290,13 +290,12 @@ module Jekyll
 
             pagesToGenerate.each do |filePath|
                 basename = File.basename(filePath)
-                basename_sans_extension = File.basename(filePath, ".md", ".html")
                 outDirectory = filePath.sub(generateBasePath, '').sub(basename, '')
 
                 data = []
 
                 # If there is a specific payload that needs to be sent...
-                if basename_sans_extension == "progression"
+                if basename == "progression.json" || basename == "progression.html" 
                     data = build_progression_payload()
                 end
 
