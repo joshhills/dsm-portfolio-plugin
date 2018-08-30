@@ -240,13 +240,13 @@ module Jekyll
     
                 input.map do |entry|
                     puts entry.inspect
-                    # entry.select do |key, value|
-                    #     if exclude
-                    #         !downcased_fields.include?(key.downcase)
-                    #     else
-                    #         downcased_fields.include?(key.downcase)
-                    #     end
-                    # end
+                    entry.select do |key, value|
+                        if exclude
+                            !downcased_fields.include?(key.downcase)
+                        else
+                            downcased_fields.include?(key.downcase)
+                        end
+                    end
                 end
             end
 
