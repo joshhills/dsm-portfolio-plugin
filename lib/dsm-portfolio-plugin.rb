@@ -229,6 +229,8 @@ module Jekyll
                         end
                     end
                 end
+
+                temp
             end
 
             def wrap_with_key(input, key)
