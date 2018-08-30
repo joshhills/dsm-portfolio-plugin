@@ -211,7 +211,7 @@ module Jekyll
                 hash_values = all_values.select { |value| value.class == Hash }
 
                 puts "hash_values = #{hash_values.inspect}"
-                
+
                 most_nested_values = []
         
                 if hash_values.count > 0
@@ -291,18 +291,13 @@ module Jekyll
                 puts outDirectory
 
                 # Format paths.
-                generatedPage = GeneratedPage.new(
+                site.pages << GeneratedPage.new(
                     site,
                     site.source,
                     outDirectory,
                     basename,
                     filePath.sub(basename, '')
-                )
-
-                # Create the page
-                generatedPage.render(site.layouts, site.site_payload)
-                generatedPage.write(site.dest)
-                site.pages << generatedPage                
+                )           
             end
         end
     end
@@ -358,9 +353,6 @@ module Jekyll
             return "{\"foo\": \"bar\"}"
         end
     end
-
-
-
 end
 
 # Register everything.
