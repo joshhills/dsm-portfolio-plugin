@@ -203,28 +203,6 @@ module Jekyll
 
     module Filters
         module ApiFilter
-            def flatten_hash(input)
-                all_values = input.to_a.flatten
-
-                puts "all_values = #{all_values.inspect}"
-
-                hash_values = all_values.select { |value| value.class == Hash }
-
-                puts "hash_values = #{hash_values.inspect}"
-
-                most_nested_values = []
-        
-                if hash_values.count > 0
-                    hash_values.each do |hash_value|
-                        most_nested_values << flatten_hash(hash_value)
-                    end
-        
-                    most_nested_values.flatten
-                else
-                    return input
-                end
-            end
-
             def include_fields(input, fields)
                 filter_fields(input, fields, false)
             end
@@ -236,18 +214,9 @@ module Jekyll
             def filter_fields(input, fields, exclude)
                 downcased_fields = fields
                     .split(",")
-                    .map { |field| field.strip.downcase }
+                    .map { |field| field.strip }
     
-                input.map do |entry|
-                    puts entry.inspect
-                    entry.select do |key, value|
-                        if exclude
-                            !downcased_fields.include?(key.downcase)
-                        else
-                            downcased_fields.include?(key.downcase)
-                        end
-                    end
-                end
+                input.except(downcased_fields)
             end
 
             def wrap_with_key(input, key)
