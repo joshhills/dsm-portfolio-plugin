@@ -269,11 +269,13 @@ module Jekyll
     end
 
     class GeneratedPage < Page
-        def initialize(site, base, dir, name, template)
+        def initialize(site, base, dir, name, template, data=[])
             @site = site
             @base = base
             @dir = dir
             @name = name
+            
+            self.data["payload"] = data
             self.process(@name)
             self.read_yaml(template, @name)
         end   
@@ -288,69 +290,29 @@ module Jekyll
 
             pagesToGenerate.each do |filePath|
                 basename = File.basename(filePath)
-                
+                basename_sans_extension = File.basename(filePath, ".md", ".html")
                 outDirectory = filePath.sub(generateBasePath, '').sub(basename, '')
+
+                data = []
+
+                # If there is a specific payload that needs to be sent...
+                if basename_sans_extension == "progression"
+                    data = build_progression_payload()
+                end
 
                 site.pages << GeneratedPage.new(
                     site,
                     site.source,
                     outDirectory,
                     basename,
-                    filePath.sub(basename, '')
+                    filePath.sub(basename, ''),
+                    data
                 )           
             end
         end
-    end
 
-    class ProgressionPage < Page
-        def initialize(site, base, dir, data)
-            @site = site
-            @base = base
-            @dir = dir
-            @name = 'progression.html'
-            self.process(@name)
-            self.read_yaml(File.join(base, '_layouts'), 'progression.html')
-
-            # Format data for API.
-            self.data['progression_data'] = data
-        end   
-    end
-
-    class ProgressionAPIPage < Page
-        def initialize(site, base, dir, data)
-            @site = site
-            @base = base
-            @dir = dir
-            @name = 'progression.json'
-            self.process(@name)
-            self.read_yaml(File.join(base, '_layouts'), 'progression.json')
-
-            # Format data for API.
-            self.data['progression_data'] = data
-        end   
-    end
-    
-    class ProgressionAPIGenerator < Generator
-        priority :low
-
-        def generate(site)
-            # Format data for API.
-            progression_data = build_progression()
-
-            progressionAPIPage = ProgressionAPIPage.new(site, site.source, '/api/v1/', progression_data)
-            progressionAPIPage.render(site.layouts, site.site_payload)
-            progressionAPIPage.write(site.dest)
-            site.pages << progressionAPIPage
-            
-            progressionPage = ProgressionPage.new(site, site.source, '/', progression_data)
-            progressionPage.render(site.layouts, site.site_payload)
-            progressionPage.write(site.dest)
-            site.pages << progressionPage
-        end
-
-        # Internal
-        def build_progression()
-            return "{\"foo\": \"bar\"}"
+        def build_progression_payload()
+            return "foo"
         end
     end
 end
