@@ -225,14 +225,26 @@ module Jekyll
                 end
             end
 
-            def filter_fields(input, fields)
+            def include_fields(input, fields)
+                filter_fields(input, fields, false)
+            end
+
+            def strip_fields(input, fields)
+                filter_fields(input, fields, true)
+            end
+
+            def filter_fields(input, fields, exclude)
                 downcased_fields = fields
                     .split(",")
                     .map { |field| field.strip.downcase }
     
                 input.map do |entry|
                     entry.select do |key, value|
-                        downcased_fields.include?(key.downcase)
+                        if exclude
+                            !downcased_fields.include?(key.downcase)
+                        else
+                            downcased_fields.include?(key.downcase)
+                        end
                     end
                 end
             end
@@ -262,35 +274,14 @@ module Jekyll
         priority :normal
 
         def generate(site)
-            # For each file in '_layouts/generate'
-            puts "Starting page generator"
-
             pagesToGenerate = Dir.glob(File.join(site.source, '_layouts/generate/**/*.*'))
             generateBasePath = File.join(site.source, '_layouts/generate')
 
-            puts "Pages to generate:"
-            puts pagesToGenerate.to_json
-
-            puts "Site base:"
-            puts site.source
-
             pagesToGenerate.each do |filePath|
                 basename = File.basename(filePath)
-
-                puts "Filepath:"
-                puts filePath
                 
-                puts "Basename:"
-                puts File.basename(filePath)
-                
-                puts "In Directory:"
-                puts generateBasePath
-                
-                puts "Out Directory:"
                 outDirectory = filePath.sub(generateBasePath, '').sub(basename, '')
-                puts outDirectory
 
-                # Format paths.
                 site.pages << GeneratedPage.new(
                     site,
                     site.source,
