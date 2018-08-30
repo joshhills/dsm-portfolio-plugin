@@ -274,13 +274,13 @@ module Jekyll
             @base = base
             @dir = dir
             @name = name
+
+            self.process(@name)
+            self.read_yaml(template, @name)
             
             if data
                 self.data["payload"] = data
             end
-            
-            self.process(@name)
-            self.read_yaml(template, @name)
         end   
     end
     
