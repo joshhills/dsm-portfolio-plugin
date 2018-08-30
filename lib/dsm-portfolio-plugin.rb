@@ -269,7 +269,7 @@ module Jekyll
     end
 
     class GeneratedPage < Page
-        def initialize(site, base, dir, name, template, data=[])
+        def initialize(site, base, dir, name, template, "")
             @site = site
             @base = base
             @dir = dir
