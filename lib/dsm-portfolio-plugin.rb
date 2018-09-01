@@ -167,6 +167,11 @@ module Jekyll
         end
       
         def render(context)
+            # Edge case - work around to prevent excerpt rendering from producing extra page meta.
+            if caller.any? { |trace| trace.include? 'jekyll/excerpt' }
+                return
+            end
+
             # Check for existence of vignette iterations.
             if !context['page']['vignettes']
                 context['page']['vignettes'] = []
@@ -299,7 +304,7 @@ module Jekyll
 
                 # If there is a specific payload that needs to be sent...
                 if basename == "progression.json" || basename == "progression.html" 
-                    data = build_progression_payload()
+                    data = build_progression_payload(site)
                 end
  
                 site.pages << GeneratedPage.new(
@@ -313,8 +318,73 @@ module Jekyll
             end
         end
 
-        def build_progression_payload()
-            return "foo"
+        def build_progression_payload(site)
+            categories = site.data['competencies'].group_by {|c| c['categories'][0]}
+
+            a_projects = site.data['projects']
+            u_vignettes = site.posts.docs.select {|p| p['type'] == 'vignette'}
+
+            project_rows = []
+
+            for a_project in a_projects
+                project_row = {}
+
+                # Set project meta.
+                project_row['projectId'] = a_project['id']
+                project_row['projectTitle'] = a_project['title']
+                project_row['deadline'] = a_project['deadline']
+
+                # Find related user-submitted post.
+                linked_vignettes = u_vignettes.select {|v| v.data['project_code'] == a_project['id']}
+                project_row['submitted'] = linked_vignettes.size > 0
+
+                # There should only be one...
+                vignette = linked_vignettes[0]
+                
+                # Generators run before 'render', so it is necessary to
+                # render this document early to access meta-information
+                # computed from tags during.
+                Jekyll::Renderer.new(site, vignette, site.site_payload).run
+                # It now has 'data' Hash.
+
+                # Compute values for each competency.
+                project_row['competencies'] = []
+
+                num_targets_met = 0
+
+                # Iterate over competencies.
+                for category in categories
+                    for competency in category[1]
+                        computed_competency = {}
+
+                        computed_competency['competencyId'] = competency['id']
+                        
+                        # Find out if it was a target of the project.
+                        computed_competency['target'] = a_project['targets'].include? competency['id']
+
+                        # Find out if it was included in the user's final vignette iteration.
+                        final_vignette = vignette.data['vignettes'].last
+                        computed_competency['included'] = final_vignette[:competencies].any?{|c| c['id'] == competency['id']}
+                        computed_competency['included'] = true
+
+                        # If it was a target that was met
+                        if computed_competency['target'] && computed_competency['included']
+                            num_targets_met += 1
+                        end
+
+                        project_row['competencies'].push(computed_competency)
+                    end
+                end
+
+                project_row['allTargetsHit'] = num_targets_met == a_project['targets'].size
+
+                project_rows.push(project_row)
+            end
+
+            return {
+                "project_rows" => project_rows,
+                "categories" => categories
+            }
         end
     end
 end
