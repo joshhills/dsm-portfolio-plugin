@@ -1,4 +1,3 @@
-# TODO: Comment!
 module Jekyll
     # Define custom commands.
     module Commands
@@ -320,7 +319,8 @@ module Jekyll
 
         def build_progression_payload(site)
             categories = site.data['competencies'].group_by {|c| c['categories'][0]}
-
+            num_competencies = site.data['competencies'].size
+            
             a_projects = site.data['projects']
             u_vignettes = site.posts.docs.select {|p| p['type'] == 'vignette'}
 
@@ -341,11 +341,13 @@ module Jekyll
                 # There should only be one...
                 vignette = linked_vignettes[0]
                 
-                # Generators run before 'render', so it is necessary to
-                # render this document early to access meta-information
-                # computed from tags during.
-                Jekyll::Renderer.new(site, vignette, site.site_payload).run
-                # It now has 'data' Hash.
+                if project_row['submitted']
+                    # Generators run before 'render', so it is necessary to
+                    # render this document early to access meta-information
+                    # computed from tags during.
+                    Jekyll::Renderer.new(site, vignette, site.site_payload).run
+                    # It now has 'data' Hash.
+                end
 
                 # Compute values for each competency.
                 project_row['competencies'] = []
@@ -363,9 +365,12 @@ module Jekyll
                         computed_competency['target'] = a_project['targets'].include? competency['id']
 
                         # Find out if it was included in the user's final vignette iteration.
-                        final_vignette = vignette.data['vignettes'].last
-                        computed_competency['included'] = final_vignette[:competencies].any?{|c| c['id'] == competency['id']}
-                        computed_competency['included'] = true
+                        if project_row['submitted']
+                            final_vignette = vignette.data['vignettes'].last
+                            computed_competency['included'] = final_vignette[:competencies].any? {|c| c[:id] == competency['id']}
+                        else
+                            computed_competency['included'] = false
+                        end
 
                         # If it was a target that was met
                         if computed_competency['target'] && computed_competency['included']
@@ -383,7 +388,8 @@ module Jekyll
 
             return {
                 "project_rows" => project_rows,
-                "categories" => categories
+                "categories" => categories,
+                "num_competencies" => num_competencies
             }
         end
     end
